@@ -106,11 +106,12 @@
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
+            align-content: flex-start;
             gap: 30px;
             z-index: 50;
-            padding: 20px;
+            padding: 40px 20px;
             background: rgba(225, 245, 254, 0.6);
+            overflow-y: auto;
         }
 
         .big-card {
@@ -356,6 +357,59 @@
             right: 0;
         }
 
+        .bullet {
+            position: absolute;
+            font-size: 1.6rem;
+            bottom: 12px;
+            pointer-events: none;
+            z-index: 200;
+            filter: drop-shadow(0 0 4px #FFD700);
+        }
+
+        @keyframes bullet-fly {
+            0% {
+                right: 10%;
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                right: 90%;
+                opacity: 0;
+                transform: scale(0.4);
+            }
+        }
+
+        @keyframes monster-hit {
+            0% {
+                transform: translateX(0) scale(1);
+                filter: none;
+            }
+
+            25% {
+                transform: translateX(-12px) scale(1.2);
+                filter: brightness(5) saturate(0);
+            }
+
+            50% {
+                transform: translateX(8px) scale(0.9);
+                filter: brightness(2) hue-rotate(180deg);
+            }
+
+            75% {
+                transform: translateX(-6px) scale(1.05);
+            }
+
+            100% {
+                transform: translateX(0) scale(1);
+                filter: none;
+            }
+        }
+
         .hearts-box {
             position: absolute;
             top: 70px;
@@ -547,9 +601,9 @@
                 <p>វាយអក្សរ English ពី A ដល់ Z!</p>
             </div>
             <div class="big-card" onclick="game.start('monster')">
-                <span class="emoji">🧟</span>
-                <h2>រត់គេចបិសាច</h2>
-                <p>វាយអក្សរឲ្យលឿន មុនពេលបិសាចចាប់បាន (៥ បេះដូង)!</p>
+                <span class="emoji">🔫</span>
+                <h2>បាញបិសាច</h2>
+                <p>វាយអក្សរឲ្យបាញបិសាច! (៥ បេះដូង)!</p>
             </div>
         </div>
 
@@ -574,9 +628,9 @@
         <!-- Monster Mode UI -->
         <div id="monster-container">
             <div id="monster-hearts" class="hearts-box">❤️❤️❤️❤️❤️</div>
-            <div class="runner-track">
+            <div class="runner-track" id="runner-track">
                 <div class="monster-sprite" id="monster-sprite">🧟</div>
-                <div class="player-sprite">🏃</div>
+                <div class="player-sprite">🔫</div>
             </div>
             <div class="target-letter-box" id="monster-target-letter">A</div>
             <div class="keyboard" id="monster-keyboard">
@@ -593,7 +647,9 @@
 
     <!-- Settings Modal -->
     <div id="settings-modal">
-        <div class="modal-content">
+        <div class="modal-content" style="position: relative;">
+            <button class="icon-btn" id="close-settings-x" title="Close"
+                style="position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; font-size: 1rem; border-width: 2px; box-shadow: 0 3px 0 #0277BD; padding: 0;">❌</button>
             <div class="setting-row">
                 <label>មាតិកាមេរៀន</label>
                 <div class="radio-group" id="content-select">
@@ -811,8 +867,8 @@
                 this.cleanup();
                 menuScreen.style.display = 'flex';
                 dragContainer.style.display = 'none';
-                if(typeContainer) typeContainer.style.display = 'none';
-                if(document.getElementById('monster-container')) document.getElementById('monster-container').style.display = 'none';
+                if (typeContainer) typeContainer.style.display = 'none';
+                if (document.getElementById('monster-container')) document.getElementById('monster-container').style.display = 'none';
                 scoreBoard.style.display = 'none';
                 backBtn.style.display = 'none';
                 document.removeEventListener('keydown', game.handleTypeKeydown);
@@ -1009,7 +1065,7 @@
                     if (state.typingIndex >= englishLetters.length) {
                         // Win state
                         playSound('success');
-                        targetTypeLetter.innerText = "Awesome!"; 
+                        targetTypeLetter.innerText = "Awesome!";
                         targetTypeLetter.style.fontSize = "4rem";
                         setTimeout(() => {
                             triggerFireworks();
@@ -1045,7 +1101,7 @@
                     triggerFireworks();
                     state.score += 5;
                     scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
-                    
+
                     const keys = Array.from(typeKeyboard.children);
                     const btn = keys.find(k => k.innerText === target);
                     if (btn) {
@@ -1066,7 +1122,7 @@
                 }
             },
 
-            handleTypeKeydown: function(e) {
+            handleTypeKeydown: function (e) {
                 if (state.currentMode !== 'type') return;
                 const key = e.key.toUpperCase();
                 if (englishLetters.includes(key)) {
@@ -1081,13 +1137,13 @@
                 document.getElementById('monster-hearts').innerText = '❤️❤️❤️❤️❤️';
                 document.getElementById('monster-sprite').style.left = '0%';
                 document.getElementById('monster-target-letter').style.fontSize = "8rem";
-                
+
                 if (document.getElementById('monster-keyboard').children.length === 0) {
                     this.buildMonsterKeyboard();
                 }
                 this.updateMonsterTarget();
 
-                const step = config.speed * 0.7; 
+                const step = config.speed * 0.7;
                 clearInterval(state.monsterIntervalId);
                 state.monsterIntervalId = setInterval(() => {
                     if (state.currentMode !== 'monster') return;
@@ -1145,13 +1201,14 @@
             handleMonsterInput: function (letter) {
                 if (state.hearts <= 0) return;
                 const target = document.getElementById('monster-target-letter').innerText;
-                
+
                 if (letter.toUpperCase() === target.toUpperCase()) {
                     playSound('success');
                     state.score += 5;
                     scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
+                    this.shootBullet();
                     state.monsterPos = 0;
-                    
+
                     const keys = Array.from(document.getElementById('monster-keyboard').children);
                     const btn = keys.find(k => k.innerText === target);
                     if (btn) {
@@ -1169,12 +1226,42 @@
                 }
             },
 
-            handleMonsterKeydown: function(e) {
+            handleMonsterKeydown: function (e) {
                 if (state.currentMode !== 'monster') return;
                 const key = e.key.toUpperCase();
                 if (englishLetters.includes(key)) {
                     game.handleMonsterInput(key);
                 }
+            },
+
+            shootBullet: function () {
+                const track = document.getElementById('runner-track');
+                const monsterEl = document.getElementById('monster-sprite');
+                if (!track) return;
+
+                // Create bullet emoji
+                const bullet = document.createElement('div');
+                bullet.classList.add('bullet');
+                bullet.innerText = '💥';
+                bullet.style.right = '10%';
+                track.appendChild(bullet);
+
+                // Animate bullet flying right-to-left across the track
+                const anim = bullet.animate([
+                    { right: '10%', opacity: 1, transform: 'scale(1) translateY(0)' },
+                    { right: '88%', opacity: 1, transform: 'scale(1.3) translateY(-4px)' },
+                    { right: '90%', opacity: 0, transform: 'scale(0.4) translateY(0)' }
+                ], { duration: 380, easing: 'ease-in', fill: 'forwards' });
+
+                anim.onfinish = () => {
+                    bullet.remove();
+                    // Hit flash on monster
+                    monsterEl.style.animation = 'none';
+                    monsterEl.style.animation = 'monster-hit 0.4s ease-out';
+                    setTimeout(() => {
+                        monsterEl.style.animation = 'wobble 3s infinite ease-in-out';
+                    }, 420);
+                };
             }
         };
 
@@ -1194,6 +1281,7 @@
         // --- UI Interactions ---
         document.getElementById('settings-btn').onclick = () => document.getElementById('settings-modal').style.display = 'flex';
         document.getElementById('close-settings').onclick = () => document.getElementById('settings-modal').style.display = 'none';
+        document.getElementById('close-settings-x').onclick = () => document.getElementById('settings-modal').style.display = 'none';
         backBtn.onclick = () => game.stop();
 
         speedSlider.oninput = (e) => {

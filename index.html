@@ -253,6 +253,69 @@
             transform: scale(1.1);
         }
 
+        /* --- Type Mode Styles --- */
+        #type-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 40;
+        }
+
+        .target-letter-box {
+            font-size: 8rem;
+            color: #D84315;
+            font-weight: bold;
+            background: white;
+            padding: 20px 60px;
+            border-radius: 30px;
+            box-shadow: 0 10px 0 #FF7043;
+            border: 6px solid #FF7043;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            font-family: 'Kantumruy Pro', sans-serif;
+            transition: transform 0.2s;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 100%;
+            width: 600px;
+        }
+
+        .key-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: white;
+            border: 3px solid #4FC3F7;
+            border-radius: 12px;
+            box-shadow: 0 5px 0 #0277BD;
+            color: #0277BD;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            font-family: 'Kantumruy Pro', sans-serif;
+            transition: all 0.1s;
+        }
+
+        .key-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #0277BD;
+        }
+
         /* --- Score & UI --- */
         .score-board {
             position: absolute;
@@ -424,6 +487,11 @@
                 <h2>ផ្គូផ្គង និងអូស</h2>
                 <p>អូសអក្សរទៅស្រមោល!</p>
             </div>
+            <div class="big-card" onclick="game.start('type')">
+                <span class="emoji">⌨️</span>
+                <h2>វាយអក្សរ</h2>
+                <p>វាយអក្សរ English ពី A ដល់ Z!</p>
+            </div>
         </div>
 
         <!-- Drag Mode UI -->
@@ -433,6 +501,14 @@
             </div>
             <div class="drag-items-row" id="drag-items-row">
                 <!-- Draggable items will be spawned here -->
+            </div>
+        </div>
+
+        <!-- Type Mode UI -->
+        <div id="type-container">
+            <div class="target-letter-box" id="target-type-letter">A</div>
+            <div class="keyboard" id="type-keyboard">
+                <!-- Keys A-Z -->
             </div>
         </div>
 
@@ -455,6 +531,14 @@
             </div>
 
             <div class="setting-row">
+                <label>ទម្រង់វាយអក្សរ</label>
+                <div class="radio-group" id="typing-order-select">
+                    <div class="radio-btn active" data-value="sequence">A-Z</div>
+                    <div class="radio-btn" data-value="random">ចៃដន្យ</div>
+                </div>
+            </div>
+
+            <div class="setting-row">
                 <label>ល្បឿនហ្គេម: <span id="speed-label">ធម្មតា</span></label>
                 <input type="range" id="speed-slider" min="0.2" max="2.0" step="0.1" value="1.0">
                 <p style="font-size: 0.9rem; color: #666; margin-top:5px;">ឆ្វេងគឺយឺត ស្តាំគឺលឿន</p>
@@ -470,6 +554,7 @@
             mode: 'khmer_letter',
             speed: 1.0,
             spawnRate: 1500,
+            typingOrder: 'sequence',
             colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#54A0FF', '#A29BFE', '#F06292']
         };
 
@@ -483,11 +568,13 @@
             dragOffset: { x: 0, y: 0 },
             dragStartX: 0,
             dragStartY: 0,
-            targetChar: ''
+            targetChar: '',
+            typingIndex: 0
         };
 
         const khmerLetters = ["ក", "ខ", "គ", "ឃ", "ង", "ច", "ឆ", "ជ", "ឈ", "ញ", "ដ", "ឋ", "ឌ", "ឍ", "ណ", "ត", "ថ", "ទ", "ធ", "ន", "ប", "ផ", "ព", "ភ", "ម", "យ", "រ", "ល", "វ", "ស", "ហ", "ឡ", "អ"];
         const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+        const englishLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
         // --- Audio Context ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -598,12 +685,15 @@
         // --- DOM Elements ---
         const menuScreen = document.getElementById('menu-screen');
         const dragContainer = document.getElementById('drag-container');
+        const typeContainer = document.getElementById('type-container');
         const scoreBoard = document.getElementById('score-board');
         const backBtn = document.getElementById('back-btn');
         const shadowSlot = document.getElementById('shadow-slot');
         const dragItemsRow = document.getElementById('drag-items-row');
         const speedSlider = document.getElementById('speed-slider');
         const contentBtns = document.querySelectorAll('#content-select .radio-btn');
+        const targetTypeLetter = document.getElementById('target-type-letter');
+        const typeKeyboard = document.getElementById('type-keyboard');
 
         // --- Helper Functions ---
         function randomChar() {
@@ -628,6 +718,10 @@
                 } else if (mode === 'drag') {
                     dragContainer.style.display = 'flex';
                     this.setupDragLevel();
+                } else if (mode === 'type') {
+                    typeContainer.style.display = 'flex';
+                    this.setupTypeLevel();
+                    document.addEventListener('keydown', game.handleTypeKeydown);
                 }
             },
 
@@ -637,8 +731,10 @@
                 this.cleanup();
                 menuScreen.style.display = 'flex';
                 dragContainer.style.display = 'none';
+                if(typeContainer) typeContainer.style.display = 'none';
                 scoreBoard.style.display = 'none';
                 backBtn.style.display = 'none';
+                document.removeEventListener('keydown', game.handleTypeKeydown);
             },
 
             cleanup: function () {
@@ -804,6 +900,96 @@
                 tile.style.position = 'static';
                 tile.style.zIndex = 10;
                 tile.style.left = 'auto'; tile.style.top = 'auto';
+            },
+
+            // --- Type Level Setup ---
+            setupTypeLevel: function () {
+                state.typingIndex = 0;
+                if (typeKeyboard.children.length === 0) {
+                    this.buildKeyboard();
+                }
+                this.updateTypeTarget();
+            },
+
+            buildKeyboard: function () {
+                typeKeyboard.innerHTML = '';
+                englishLetters.forEach(letter => {
+                    const btn = document.createElement('div');
+                    btn.classList.add('key-btn');
+                    btn.innerText = letter;
+                    btn.onclick = () => this.handleTypeInput(letter);
+                    typeKeyboard.appendChild(btn);
+                });
+            },
+
+            updateTypeTarget: function () {
+                if (config.typingOrder === 'sequence') {
+                    if (state.typingIndex >= englishLetters.length) {
+                        // Win state
+                        playSound('success');
+                        targetTypeLetter.innerText = "Awesome!"; 
+                        targetTypeLetter.style.fontSize = "4rem";
+                        setTimeout(() => {
+                            triggerFireworks();
+                            state.typingIndex = 0;
+                            targetTypeLetter.style.fontSize = "8rem";
+                            this.updateTypeTarget();
+                        }, 2000);
+                        return;
+                    }
+                    targetTypeLetter.innerText = englishLetters[state.typingIndex];
+                } else {
+                    // Random mode
+                    const current = targetTypeLetter.innerText;
+                    let next;
+                    do {
+                        next = englishLetters[Math.floor(Math.random() * englishLetters.length)];
+                    } while (next === current);
+                    targetTypeLetter.innerText = next;
+                }
+            },
+
+            handleTypeInput: function (letter) {
+                let target;
+                if (config.typingOrder === 'sequence') {
+                    if (state.typingIndex >= englishLetters.length) return;
+                    target = englishLetters[state.typingIndex];
+                } else {
+                    target = targetTypeLetter.innerText;
+                }
+
+                if (letter.toUpperCase() === target.toUpperCase()) {
+                    playSound('success');
+                    triggerFireworks();
+                    state.score += 5;
+                    scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
+                    
+                    const keys = Array.from(typeKeyboard.children);
+                    const btn = keys.find(k => k.innerText === target);
+                    if (btn) {
+                        btn.style.backgroundColor = '#66BB6A';
+                        btn.style.color = 'white';
+                        setTimeout(() => {
+                            btn.style.backgroundColor = '';
+                            btn.style.color = '';
+                        }, 300);
+                    }
+
+                    if (config.typingOrder === 'sequence') {
+                        state.typingIndex++;
+                    }
+                    this.updateTypeTarget();
+                } else {
+                    targetTypeLetter.animate([{ transform: 'translateX(-10px)' }, { transform: 'translateX(10px)' }, { transform: 'translateX(0)' }], { duration: 200, iterations: 2 });
+                }
+            },
+
+            handleTypeKeydown: function(e) {
+                if (state.currentMode !== 'type') return;
+                const key = e.key.toUpperCase();
+                if (englishLetters.includes(key)) {
+                    game.handleTypeInput(key);
+                }
             }
         };
 
@@ -839,6 +1025,18 @@
                 contentBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 config.mode = btn.dataset.value;
+            };
+        });
+
+        const typingOrderBtns = document.querySelectorAll('#typing-order-select .radio-btn');
+        typingOrderBtns.forEach(btn => {
+            btn.onclick = () => {
+                typingOrderBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                config.typingOrder = btn.dataset.value;
+                if (state.currentMode === 'type') {
+                    game.setupTypeLevel();
+                }
             };
         });
 

@@ -316,6 +316,60 @@
             box-shadow: 0 0 0 #0277BD;
         }
 
+        /* --- Monster Mode Styles --- */
+        #monster-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 45;
+            background-color: #FFEBEE;
+        }
+
+        .runner-track {
+            width: 80%;
+            max-width: 600px;
+            height: 60px;
+            border-bottom: 5px solid #5D4037;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .monster-sprite {
+            font-size: 4rem;
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            transition: left 0.1s linear;
+        }
+
+        .player-sprite {
+            font-size: 4rem;
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+        }
+
+        .hearts-box {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            background: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            border: 3px solid #E57373;
+            box-shadow: 0 4px 0 #EF5350;
+            z-index: 80;
+        }
+
         /* --- Score & UI --- */
         .score-board {
             position: absolute;
@@ -492,6 +546,11 @@
                 <h2>វាយអក្សរ</h2>
                 <p>វាយអក្សរ English ពី A ដល់ Z!</p>
             </div>
+            <div class="big-card" onclick="game.start('monster')">
+                <span class="emoji">🧟</span>
+                <h2>រត់គេចបិសាច</h2>
+                <p>វាយអក្សរឲ្យលឿន មុនពេលបិសាចចាប់បាន (៥ បេះដូង)!</p>
+            </div>
         </div>
 
         <!-- Drag Mode UI -->
@@ -508,6 +567,19 @@
         <div id="type-container">
             <div class="target-letter-box" id="target-type-letter">A</div>
             <div class="keyboard" id="type-keyboard">
+                <!-- Keys A-Z -->
+            </div>
+        </div>
+
+        <!-- Monster Mode UI -->
+        <div id="monster-container">
+            <div id="monster-hearts" class="hearts-box">❤️❤️❤️❤️❤️</div>
+            <div class="runner-track">
+                <div class="monster-sprite" id="monster-sprite">🧟</div>
+                <div class="player-sprite">🏃</div>
+            </div>
+            <div class="target-letter-box" id="monster-target-letter">A</div>
+            <div class="keyboard" id="monster-keyboard">
                 <!-- Keys A-Z -->
             </div>
         </div>
@@ -569,7 +641,10 @@
             dragStartX: 0,
             dragStartY: 0,
             targetChar: '',
-            typingIndex: 0
+            typingIndex: 0,
+            hearts: 5,
+            monsterIntervalId: null,
+            monsterPos: 0
         };
 
         const khmerLetters = ["ក", "ខ", "គ", "ឃ", "ង", "ច", "ឆ", "ជ", "ឈ", "ញ", "ដ", "ឋ", "ឌ", "ឍ", "ណ", "ត", "ថ", "ទ", "ធ", "ន", "ប", "ផ", "ព", "ភ", "ម", "យ", "រ", "ល", "វ", "ស", "ហ", "ឡ", "អ"];
@@ -722,19 +797,26 @@
                     typeContainer.style.display = 'flex';
                     this.setupTypeLevel();
                     document.addEventListener('keydown', game.handleTypeKeydown);
+                } else if (mode === 'monster') {
+                    document.getElementById('monster-container').style.display = 'flex';
+                    this.setupMonsterLevel();
+                    document.addEventListener('keydown', game.handleMonsterKeydown);
                 }
             },
 
             stop: function () {
                 state.currentMode = null;
                 cancelAnimationFrame(state.gameLoopId);
+                clearInterval(state.monsterIntervalId);
                 this.cleanup();
                 menuScreen.style.display = 'flex';
                 dragContainer.style.display = 'none';
                 if(typeContainer) typeContainer.style.display = 'none';
+                if(document.getElementById('monster-container')) document.getElementById('monster-container').style.display = 'none';
                 scoreBoard.style.display = 'none';
                 backBtn.style.display = 'none';
                 document.removeEventListener('keydown', game.handleTypeKeydown);
+                document.removeEventListener('keydown', game.handleMonsterKeydown);
             },
 
             cleanup: function () {
@@ -989,6 +1071,109 @@
                 const key = e.key.toUpperCase();
                 if (englishLetters.includes(key)) {
                     game.handleTypeInput(key);
+                }
+            },
+
+            // --- Monster Level Setup ---
+            setupMonsterLevel: function () {
+                state.hearts = 5;
+                state.monsterPos = 0;
+                document.getElementById('monster-hearts').innerText = '❤️❤️❤️❤️❤️';
+                document.getElementById('monster-sprite').style.left = '0%';
+                document.getElementById('monster-target-letter').style.fontSize = "8rem";
+                
+                if (document.getElementById('monster-keyboard').children.length === 0) {
+                    this.buildMonsterKeyboard();
+                }
+                this.updateMonsterTarget();
+
+                const step = config.speed * 0.7; 
+                clearInterval(state.monsterIntervalId);
+                state.monsterIntervalId = setInterval(() => {
+                    if (state.currentMode !== 'monster') return;
+                    state.monsterPos += step;
+                    document.getElementById('monster-sprite').style.left = state.monsterPos + '%';
+                    if (state.monsterPos >= 85) {
+                        this.loseHeart();
+                        state.monsterPos = 0;
+                    }
+                }, 50);
+            },
+
+            buildMonsterKeyboard: function () {
+                const kb = document.getElementById('monster-keyboard');
+                kb.innerHTML = '';
+                englishLetters.forEach(letter => {
+                    const btn = document.createElement('div');
+                    btn.classList.add('key-btn');
+                    btn.innerText = letter;
+                    btn.onclick = () => this.handleMonsterInput(letter);
+                    kb.appendChild(btn);
+                });
+            },
+
+            updateMonsterTarget: function () {
+                const current = document.getElementById('monster-target-letter').innerText;
+                let next;
+                do {
+                    next = englishLetters[Math.floor(Math.random() * englishLetters.length)];
+                } while (next === current);
+                document.getElementById('monster-target-letter').innerText = next;
+            },
+
+            loseHeart: function () {
+                state.hearts--;
+                const heartsStr = '❤️'.repeat(Math.max(0, state.hearts)) + '🖤'.repeat(5 - Math.max(0, state.hearts));
+                document.getElementById('monster-hearts').innerText = heartsStr;
+
+                document.getElementById('monster-container').animate([
+                    { transform: 'translate(10px, 10px)' },
+                    { transform: 'translate(-10px, -10px)' },
+                    { transform: 'translate(0, 0)' }
+                ], { duration: 100 });
+
+                if (state.hearts <= 0) {
+                    clearInterval(state.monsterIntervalId);
+                    document.getElementById('monster-target-letter').innerText = "Game Over!";
+                    document.getElementById('monster-target-letter').style.fontSize = "3rem";
+                    setTimeout(() => game.stop(), 3000);
+                } else {
+                    this.updateMonsterTarget();
+                }
+            },
+
+            handleMonsterInput: function (letter) {
+                if (state.hearts <= 0) return;
+                const target = document.getElementById('monster-target-letter').innerText;
+                
+                if (letter.toUpperCase() === target.toUpperCase()) {
+                    playSound('success');
+                    state.score += 5;
+                    scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
+                    state.monsterPos = 0;
+                    
+                    const keys = Array.from(document.getElementById('monster-keyboard').children);
+                    const btn = keys.find(k => k.innerText === target);
+                    if (btn) {
+                        btn.style.backgroundColor = '#66BB6A';
+                        btn.style.color = 'white';
+                        setTimeout(() => {
+                            btn.style.backgroundColor = '';
+                            btn.style.color = '';
+                        }, 300);
+                    }
+                    this.updateMonsterTarget();
+                } else {
+                    this.loseHeart();
+                    state.monsterPos = 0;
+                }
+            },
+
+            handleMonsterKeydown: function(e) {
+                if (state.currentMode !== 'monster') return;
+                const key = e.key.toUpperCase();
+                if (englishLetters.includes(key)) {
+                    game.handleMonsterInput(key);
                 }
             }
         };

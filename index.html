@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html lang="km">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kids Learn & Play - Khmer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Kantumruy+Pro:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-color: #4FC3F7;
+            --secondary-color: #FF7043;
             --accent-color: #FFD54F;
+            --success-color: #66BB6A;
             --text-color: #37474F;
             --bg-color: #E1F5FE;
-            --font-main: 'Khmer OS Battambang', 'Comic Sans MS', sans-serif;
+            --font-main: 'Battambang', 'Kantumruy Pro', cursive, sans-serif;
         }
 
         * {
             box-sizing: border-box;
-            user-select: none; /* Prevent text selection for kids */
+            user-select: none;
             -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -24,7 +33,7 @@
             padding: 0;
             font-family: var(--font-main);
             background-color: var(--bg-color);
-            background-image: linear-gradient(to bottom, #81D4FA, #E1F5FE);
+            background-image: radial-gradient(circle at 50% 50%, #B3E5FC 0%, #E1F5FE 100%);
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -37,36 +46,43 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(5px);
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #0277BD;
+            text-shadow: 1px 1px 0 white;
+            font-family: 'Kantumruy Pro', sans-serif;
         }
 
         .icon-btn {
             background: white;
-            border: 2px solid #0277BD;
+            border: 3px solid #0277BD;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 1.2rem;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 0 #0277BD;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 0 #0277BD;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
         }
 
         .icon-btn:active {
-            transform: translateY(4px);
+            transform: translateY(5px);
             box-shadow: 0 0 0 #0277BD;
         }
 
@@ -76,6 +92,7 @@
             position: relative;
             width: 100%;
             height: 100%;
+            overflow: hidden;
         }
 
         /* --- Menu Screen --- */
@@ -86,41 +103,61 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 30px;
             z-index: 50;
-            background: rgba(225, 245, 254, 0.9);
+            padding: 20px;
+            background: rgba(225, 245, 254, 0.6);
         }
 
         .big-card {
             background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 80%;
-            max-width: 300px;
+            width: 280px;
             cursor: pointer;
-            transition: transform 0.2s;
-            border: 4px solid #B3E5FC;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 6px solid #B3E5FC;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .big-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
         }
 
         .big-card:hover {
-            transform: scale(1.05);
-            border-color: #29B6F6;
+            transform: translateY(-10px) scale(1.03);
+            border-color: #0277BD;
+        }
+
+        .big-card:hover::after {
+            left: 100%;
         }
 
         .big-card h2 {
-            margin: 10px 0;
-            font-size: 2rem;
+            margin: 15px 0 5px;
+            font-size: 1.8rem;
             color: #0277BD;
         }
 
         .big-card .emoji {
-            font-size: 4rem;
+            font-size: 5rem;
             display: block;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
         }
 
         /* --- Game Elements --- */
@@ -130,36 +167,127 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: white;
             cursor: pointer;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 2px 2px 10px rgba(0,0,0,0.1);
+            box-shadow: inset -8px -8px 20px rgba(0, 0, 0, 0.3), 3px 3px 15px rgba(0, 0, 0, 0.1);
             animation: wobble 3s infinite ease-in-out;
             touch-action: none;
-        }
-
-        .bubble:active {
-            transform: scale(0.95);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
         @keyframes wobble {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
         }
 
+        /* --- Drag Mode Styles --- */
+        #drag-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .shadow-slot {
+            width: 150px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 4px dashed rgba(2, 119, 189, 0.3);
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6rem;
+            color: rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+        }
+
+        .shadow-slot.highlight {
+            background: rgba(79, 195, 247, 0.2);
+            border-color: #0277BD;
+            transform: scale(1.1);
+        }
+
+        .drag-items-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .draggable-tile {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 4px solid #FF7043;
+            border-radius: 20px;
+            box-shadow: 0 8px 0 #D84315;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #D84315;
+            cursor: grab;
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+
+        .draggable-tile:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+
+        /* --- Score & UI --- */
         .score-board {
             position: absolute;
-            top: 10px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255,255,255,0.8);
-            padding: 5px 20px;
-            border-radius: 30px;
-            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 25px;
+            border-radius: 40px;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #F57F17;
             pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #FFD54F;
+            z-index: 80;
+        }
+
+        #back-btn {
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            z-index: 90;
+        }
+
+        /* --- Fireworks Canvas --- */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
         }
 
         /* --- Settings Modal --- */
@@ -170,7 +298,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             z-index: 200;
             justify-content: center;
             align-items: center;
@@ -178,100 +307,106 @@
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 35px;
+            border-radius: 30px;
             width: 90%;
-            max-width: 400px;
-            border: 5px solid #4FC3F7;
+            max-width: 450px;
+            border: 8px solid #4FC3F7;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
         }
 
         .setting-row {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: left;
         }
 
         .setting-row label {
             display: block;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
             font-weight: bold;
+            color: #0277BD;
         }
 
         input[type="range"] {
             width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: #ddd;
+            height: 15px;
+            border-radius: 10px;
+            background: #E1F5FE;
             outline: none;
+            appearance: none;
             -webkit-appearance: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: #0277BD;
             cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            border: 3px solid white;
         }
 
         .radio-group {
             display: flex;
             gap: 15px;
         }
-        
+
         .radio-btn {
             flex: 1;
-            padding: 10px;
-            background: #eee;
+            padding: 15px;
+            background: #f0f0f0;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
+            font-weight: bold;
+            transition: all 0.2s;
         }
-        
+
         .radio-btn.active {
             background: #B3E5FC;
             border-color: #0277BD;
             color: #0277BD;
-            font-weight: bold;
+            transform: scale(1.05);
         }
 
         .close-btn {
-            background: #FF7043;
+            background: var(--secondary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border-radius: 20px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 0 #D84315;
+            box-shadow: 0 6px 0 #D84315;
+            font-weight: bold;
         }
 
         .close-btn:active {
             transform: translateY(4px);
-            box-shadow: none;
+            box-shadow: 0 0 0 #D84315;
         }
 
-        /* Particles */
         .particle {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             pointer-events: none;
-            animation: fadeOut 0.8s forwards;
+            z-index: 100;
         }
-
-        @keyframes fadeOut {
-            to { opacity: 0; transform: translateY(20px); }
-        }
-
     </style>
 </head>
+
 <body>
 
     <header>
+        <button class="icon-btn" id="back-btn" title="Back">🏠</button>
         <h1>រៀន និងលេង</h1>
         <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </header>
@@ -280,15 +415,33 @@
         <!-- Menu Screen -->
         <div id="menu-screen">
             <div class="big-card" onclick="game.start('pop')">
-                <span class="emoji">🫧</span>
+                <span class="emoji">🐠</span>
                 <h2>ចុចពពុះសាប៊ូ</h2>
                 <p>ចុចលើពពុះដើម្បីរៀន!</p>
+            </div>
+            <div class="big-card" onclick="game.start('drag')">
+                <span class="emoji">🎯</span>
+                <h2>ផ្គូផ្គង និងអូស</h2>
+                <p>អូសអក្សរទៅស្រមោល!</p>
+            </div>
+        </div>
+
+        <!-- Drag Mode UI -->
+        <div id="drag-container">
+            <div id="target-area">
+                <div class="shadow-slot" id="shadow-slot">?</div>
+            </div>
+            <div class="drag-items-row" id="drag-items-row">
+                <!-- Draggable items will be spawned here -->
             </div>
         </div>
 
         <!-- Score Display -->
         <div id="score-board" class="score-board" style="display:none;">ពិន្ទុ: 0</div>
     </main>
+
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworks-canvas"></canvas>
 
     <!-- Settings Modal -->
     <div id="settings-modal">
@@ -300,7 +453,7 @@
                     <div class="radio-btn" data-value="khmer_number">លេខ</div>
                 </div>
             </div>
-            
+
             <div class="setting-row">
                 <label>ល្បឿនហ្គេម: <span id="speed-label">ធម្មតា</span></label>
                 <input type="range" id="speed-slider" min="0.2" max="2.0" step="0.1" value="1.0">
@@ -314,228 +467,378 @@
     <script>
         // --- Game Configuration & State ---
         const config = {
-            mode: 'khmer_letter', // 'khmer_letter' or 'khmer_number'
+            mode: 'khmer_letter',
             speed: 1.0,
-            spawnRate: 1500, // ms
-            colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#54A0FF']
+            spawnRate: 1500,
+            colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#54A0FF', '#A29BFE', '#F06292']
         };
 
         const state = {
-            currentMode: null, // 'menu', 'pop'
+            currentMode: null,
             score: 0,
             gameLoopId: null,
             lastSpawnTime: 0,
-            entities: [] // Bubbles
+            entities: [],
+            draggedItem: null,
+            dragOffset: { x: 0, y: 0 },
+            dragStartX: 0,
+            dragStartY: 0,
+            targetChar: ''
         };
 
         const khmerLetters = ["ក", "ខ", "គ", "ឃ", "ង", "ច", "ឆ", "ជ", "ឈ", "ញ", "ដ", "ឋ", "ឌ", "ឍ", "ណ", "ត", "ថ", "ទ", "ធ", "ន", "ប", "ផ", "ព", "ភ", "ម", "យ", "រ", "ល", "វ", "ស", "ហ", "ឡ", "អ"];
         const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
 
         // --- Audio Context ---
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
             const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
             if (type === 'pop') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.linearRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.linearRampToValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        // --- Fireworks Animation ---
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1;
+                this.friction = 0.95;
+                this.gravity = 0.1;
+                this.radius = Math.random() * 3 + 1;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        function createExplosion(x, y) {
+            const count = 50;
+            const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            if (particles.length === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateFireworks);
+        }
+
+        function triggerFireworks() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createExplosion(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight * 0.6
+                    );
+                    if (i === 0) animateFireworks();
+                }, i * 200);
             }
         }
 
         // --- DOM Elements ---
-        const container = document.getElementById('game-container');
         const menuScreen = document.getElementById('menu-screen');
+        const dragContainer = document.getElementById('drag-container');
         const scoreBoard = document.getElementById('score-board');
-        const settingsModal = document.getElementById('settings-modal');
-        const speedSlider = document.getElementById('speed-slider');
-        const speedLabel = document.getElementById('speed-label');
-        const contentBtns = document.querySelectorAll('.radio-btn');
+        const backBtn = document.getElementById('back-btn');
+        const shadowSlot = document.getElementById('shadow-slot');
+        const dragItemsRow = document.getElementById('drag-items-row');
 
         // --- Helper Functions ---
         function randomChar() {
-            if (config.mode === 'khmer_letter') {
-                return khmerLetters[Math.floor(Math.random() * khmerLetters.length)];
-            } else {
-                return khmerNumbers[Math.floor(Math.random() * khmerNumbers.length)];
-            }
+            const list = config.mode === 'khmer_letter' ? khmerLetters : khmerNumbers;
+            return list[Math.floor(Math.random() * list.length)];
         }
-
-        function randomColor() {
-            return config.colors[Math.floor(Math.random() * config.colors.length)];
-        }
-
-        function createParticles(x, y, color) {
-            for(let i=0; i<8; i++) {
-                const p = document.createElement('div');
-                p.classList.add('particle');
-                p.style.backgroundColor = color;
-                p.style.left = x + 'px';
-                p.style.top = y + 'px';
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = 2 + Math.random() * 3;
-                const tx = Math.cos(angle) * velocity * 20;
-                const ty = Math.sin(angle) * velocity * 20;
-                p.animate([
-                    { transform: 'translate(0,0)', opacity: 1 },
-                    { transform: `translate(${tx}px, ${ty}px)`, opacity: 0 }
-                ], {
-                    duration: 500 + Math.random() * 300,
-                    easing: 'ease-out'
-                });
-                container.appendChild(p);
-                setTimeout(() => p.remove(), 800);
-            }
-        }
+        function randomColor() { return config.colors[Math.floor(Math.random() * config.colors.length)]; }
 
         // --- Game Logic ---
         const game = {
-            start: function(mode) {
+            start: function (mode) {
                 state.currentMode = mode;
                 state.score = 0;
-                state.entities = [];
                 scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
                 scoreBoard.style.display = 'block';
                 menuScreen.style.display = 'none';
-                
-                document.querySelectorAll('.bubble').forEach(e => e.remove());
+                backBtn.style.display = 'flex';
 
+                this.cleanup();
                 if (mode === 'pop') {
                     this.startLoop();
+                } else if (mode === 'drag') {
+                    dragContainer.style.display = 'flex';
+                    this.setupDragLevel();
                 }
             },
 
-            stop: function() {
-                cancelAnimationFrame(state.gameLoopId);
-                document.querySelectorAll('.bubble').forEach(e => e.remove());
+            stop: function () {
                 state.currentMode = null;
+                cancelAnimationFrame(state.gameLoopId);
+                this.cleanup();
                 menuScreen.style.display = 'flex';
+                dragContainer.style.display = 'none';
                 scoreBoard.style.display = 'none';
+                backBtn.style.display = 'none';
             },
 
-            startLoop: function() {
-                const loop = (timestamp) => {
-                    if (state.currentMode === null) return;
+            cleanup: function () {
+                document.querySelectorAll('.bubble, .draggable-tile, .particle').forEach(e => e.remove());
+                state.entities = [];
+                state.draggedItem = null;
+            },
 
+            startLoop: function () {
+                const loop = (timestamp) => {
+                    if (state.currentMode !== 'pop') return;
                     const adjustedSpawnRate = config.spawnRate / config.speed;
                     if (timestamp - state.lastSpawnTime > adjustedSpawnRate) {
-                        if (state.currentMode === 'pop') {
-                            this.spawnBubble();
-                        } 
+                        this.spawnBubble();
                         state.lastSpawnTime = timestamp;
                     }
-
-                    if (state.currentMode === 'pop') {
-                        this.updateBubbles();
-                    }
-
+                    this.updateBubbles();
                     state.gameLoopId = requestAnimationFrame(loop);
                 };
                 state.gameLoopId = requestAnimationFrame(loop);
             },
 
-            spawnBubble: function() {
+            spawnBubble: function () {
                 const bubble = document.createElement('div');
                 bubble.classList.add('bubble');
                 bubble.innerText = randomChar();
-                
-                const size = 70 + (Math.random() * 50);
+                const size = 80 + (Math.random() * 60);
                 bubble.style.width = size + 'px';
                 bubble.style.height = size + 'px';
                 bubble.style.backgroundColor = randomColor();
-                
-                const maxX = container.clientWidth - size;
-                const startX = Math.random() * maxX;
+                const startX = Math.random() * (window.innerWidth - size);
                 bubble.style.left = startX + 'px';
                 bubble.style.bottom = '-100px';
-
-                bubble.onmousedown = (e) => this.handlePop(e, bubble);
-                bubble.ontouchstart = (e) => this.handlePop(e, bubble);
-
-                container.appendChild(bubble);
-                state.entities.push({
-                    el: bubble,
-                    y: -100,
-                    speed: (1 + Math.random() * 2) * config.speed
-                });
+                bubble.onmousedown = bubble.ontouchstart = (e) => this.handlePop(e, bubble);
+                document.getElementById('game-container').appendChild(bubble);
+                state.entities.push({ el: bubble, y: -100, speed: (1.5 + Math.random() * 2) * config.speed });
             },
 
-            updateBubbles: function() {
-                const height = container.clientHeight;
+            updateBubbles: function () {
                 for (let i = state.entities.length - 1; i >= 0; i--) {
                     let ent = state.entities[i];
                     ent.y += ent.speed;
                     ent.el.style.bottom = ent.y + 'px';
-
-                    if (ent.y > height) {
+                    if (ent.y > window.innerHeight) {
                         ent.el.remove();
                         state.entities.splice(i, 1);
                     }
                 }
             },
 
-            handlePop: function(e, el) {
+            handlePop: function (e, el) {
                 e.preventDefault();
                 playSound('pop');
-                
                 const rect = el.getBoundingClientRect();
-                const style = window.getComputedStyle(el);
-                
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, style.backgroundColor);
-
+                this.createUIParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, el.style.backgroundColor);
                 state.score++;
                 scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
-                
                 const idx = state.entities.findIndex(x => x.el === el);
                 if (idx > -1) state.entities.splice(idx, 1);
                 el.remove();
+            },
+
+            createUIParticles: function (x, y, color) {
+                for (let i = 0; i < 8; i++) {
+                    const p = document.createElement('div');
+                    p.classList.add('particle');
+                    p.style.backgroundColor = color;
+                    p.style.left = x + 'px'; p.style.top = y + 'px';
+                    const angle = Math.random() * Math.PI * 2;
+                    const vel = 2 + Math.random() * 3;
+                    const tx = Math.cos(angle) * vel * 30;
+                    const ty = Math.sin(angle) * vel * 30;
+                    p.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${tx}px,${ty}px) scale(0)`, opacity: 0 }], { duration: 600, easing: 'ease-out' });
+                    document.getElementById('game-container').appendChild(p);
+                    setTimeout(() => p.remove(), 600);
+                }
+            },
+
+            // --- Drag Level Setup ---
+            setupDragLevel: function () {
+                dragItemsRow.innerHTML = '';
+                state.targetChar = randomChar();
+                shadowSlot.innerText = state.targetChar;
+                shadowSlot.classList.remove('highlight');
+
+                const choices = [state.targetChar];
+                while (choices.length < 3) {
+                    const next = randomChar();
+                    if (!choices.includes(next)) choices.push(next);
+                }
+                choices.sort(() => Math.random() - 0.5);
+
+                choices.forEach(char => {
+                    const tile = document.createElement('div');
+                    tile.classList.add('draggable-tile');
+                    tile.innerText = char;
+                    if (char === state.targetChar) tile.dataset.correct = "true";
+                    tile.style.borderColor = randomColor();
+                    this.addDragEvents(tile);
+                    dragItemsRow.appendChild(tile);
+                });
+            },
+
+            addDragEvents: function (el) {
+                const startDrag = (e) => {
+                    e.preventDefault();
+                    state.draggedItem = el;
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    const rect = el.getBoundingClientRect();
+                    state.dragOffset.x = clientX - rect.left;
+                    state.dragOffset.y = clientY - rect.top;
+                    state.dragStartX = rect.left;
+                    state.dragStartY = rect.top;
+                    el.style.position = 'fixed';
+                    el.style.zIndex = 1000;
+                    el.style.transition = 'none';
+                    this.updateDragPos(clientX, clientY);
+                };
+                el.onmousedown = el.ontouchstart = startDrag;
+            },
+
+            updateDragPos: function (x, y) {
+                if (!state.draggedItem) return;
+                state.draggedItem.style.left = (x - state.dragOffset.x) + 'px';
+                state.draggedItem.style.top = (y - state.dragOffset.y) + 'px';
+
+                // Check if hovering over shadow
+                const shadowRect = shadowSlot.getBoundingClientRect();
+                if (x > shadowRect.left && x < shadowRect.right && y > shadowRect.top && y < shadowRect.bottom) {
+                    shadowSlot.classList.add('highlight');
+                } else {
+                    shadowSlot.classList.remove('highlight');
+                }
+            },
+
+            handleDragEnd: function (x, y) {
+                if (!state.draggedItem) return;
+                const tile = state.draggedItem;
+                state.draggedItem = null;
+                const shadowRect = shadowSlot.getBoundingClientRect();
+
+                if (x > shadowRect.left && x < shadowRect.right && y > shadowRect.top && y < shadowRect.bottom) {
+                    if (tile.dataset.correct === "true") {
+                        playSound('success');
+                        triggerFireworks();
+                        state.score += 5;
+                        scoreBoard.innerText = `ពិន្ទុ: ${state.score}`;
+                        tile.style.display = 'none';
+                        setTimeout(() => this.setupDragLevel(), 1500);
+                    } else {
+                        // Shake and return
+                        tile.animate([{ transform: 'translateX(-10px)' }, { transform: 'translateX(10px)' }, { transform: 'translateX(0)' }], { duration: 200, iterations: 2 });
+                        this.returnTile(tile);
+                    }
+                } else {
+                    this.returnTile(tile);
+                }
+                shadowSlot.classList.remove('highlight');
+            },
+
+            returnTile: function (tile) {
+                tile.style.position = 'static';
+                tile.style.zIndex = 10;
+                tile.style.left = 'auto'; tile.style.top = 'auto';
             }
         };
 
-        // --- UI Settings Handling ---
-        document.getElementById('settings-btn').addEventListener('click', () => {
-            settingsModal.style.display = 'flex';
+        // --- Global Mouse/Touch Handlers ---
+        document.addEventListener('mousemove', (e) => game.updateDragPos(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => {
+            if (state.draggedItem) e.preventDefault();
+            game.updateDragPos(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        document.addEventListener('mouseup', (e) => game.handleDragEnd(e.clientX, e.clientY));
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            game.handleDragEnd(endX, endY);
         });
 
-        document.getElementById('close-settings').addEventListener('click', () => {
-            settingsModal.style.display = 'none';
-        });
+        // --- UI Interactions ---
+        document.getElementById('settings-btn').onclick = () => document.getElementById('settings-modal').style.display = 'flex';
+        document.getElementById('close-settings').onclick = () => document.getElementById('settings-modal').style.display = 'none';
+        backBtn.onclick = () => game.stop();
 
-        speedSlider.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            config.speed = val;
-            
-            let label = "ធម្មតា";
-            if (val < 0.5) label = "យឺតបំផុត";
-            else if (val < 0.8) label = "យឺត";
-            else if (val > 1.5) label = "លឿន";
-            else if (val > 1.2) label = "លឿន";
-            
-            speedLabel.innerText = label;
-        });
+        speedSlider.oninput = (e) => {
+            config.speed = parseFloat(e.target.value);
+            const labels = { 0.5: "យឺត", 1.0: "ធម្មតា", 1.5: "លឿន", 2.0: "លឿនបំផុត" };
+            document.getElementById('speed-label').innerText = labels[config.speed] || "ធម្មតា";
+        };
 
         contentBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.onclick = () => {
                 contentBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 config.mode = btn.dataset.value;
-            });
+            };
         });
 
         game.stop();
-
     </script>
 </body>
+
 </html>

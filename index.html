@@ -602,6 +602,8 @@
         const backBtn = document.getElementById('back-btn');
         const shadowSlot = document.getElementById('shadow-slot');
         const dragItemsRow = document.getElementById('drag-items-row');
+        const speedSlider = document.getElementById('speed-slider');
+        const contentBtns = document.querySelectorAll('#content-select .radio-btn');
 
         // --- Helper Functions ---
         function randomChar() {
@@ -825,8 +827,11 @@
 
         speedSlider.oninput = (e) => {
             config.speed = parseFloat(e.target.value);
-            const labels = { 0.5: "យឺត", 1.0: "ធម្មតា", 1.5: "លឿន", 2.0: "លឿនបំផុត" };
-            document.getElementById('speed-label').innerText = labels[config.speed] || "ធម្មតា";
+            let label = "ធម្មតា";
+            if (config.speed < 0.8) label = "យឺត";
+            else if (config.speed >= 1.8) label = "លឿនបំផុត";
+            else if (config.speed >= 1.4) label = "លឿន";
+            document.getElementById('speed-label').innerText = label;
         };
 
         contentBtns.forEach(btn => {
